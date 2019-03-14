@@ -12,6 +12,7 @@ for i in range(1, 21):
         number.append('apple')
     else:
         number.append(str(i))
+    print('apple'[i % 3 * len('apple')::] + 'orange'[i % 5 * len('orange')::] or i)
 print(' '.join(number))
 
 """
