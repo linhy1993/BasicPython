@@ -1,0 +1,56 @@
+# 函数
+1. 抽象 -> 让程序能够被人理解
+2. callable -> 判断某个对象是否可以调用
+3. 此可知,所有的函数都返回值。如果你没有告诉它们该返回
+什么,将返回 None
+4. 位于函数名后面的变量通常称为形参. 而调用函数时提供的值称为实参
+5. 参数存储在局部作用域内
+6. 将同一个列表赋给两个变量时,这两个变量将同时指向这个列表。因此可以创建覆盖整个列表的切片
+```
+>>> names = ['Mr. A', 'Mr. B']
+>>> n = names[:]
+>>> n is names
+False
+>>> n == names
+True
+```
+```
+def init(data):
+    data['first'] = {}
+    data['middle'] = {}
+    data['last'] = {}
+
+
+def lookup(data, label, name):
+    return data[label].get(name)
+
+
+def store(data, full_name):
+    names = full_name.split()
+    if len(names) == 2: names.insert(1, '')
+    labels = 'first', 'middle', 'last'
+    for label, name in zip(labels, names):
+        people = lookup(data, label, name)
+        if people:
+            people.append(full_name)
+        else:
+            data[label][name] = [full_name]
+
+Mynames = {}
+init(Mynames)
+store(Mynames, 'Magnus Lie Hetland')
+print(lookup(Mynames, 'middle', 'Lie'))
+```
+7. 关键字参数和默认值(否则不应结合使用关键字参数和位
+置参数)
+8. 赋值时带星号的变量收集多余的值, 但是星号不会收集关键字参数。 要收集关键字参数,可使用两个星号
+```
+def print_params(title, *params):
+    print(title)
+    print(params)
+```
+9. 作用域, 全局变量和局部变量, 可使用函数 globals 来访问全局变量
+10. 闭包, nonlocal -> 让你能够给外部作用域(非全局作用域)内的变量赋值
+11. 递归　阶乘和幂 
+12. 实际上,模块 bisect 提供了标准的二分查找实现。
+13. 四种传参数:  直接将实参赋予行参, 根据键值对的形式做的匹配, `func(*arg)`传入任意个参数, `func(**kargs)`其是以键值对字典的形式向函数传参
