@@ -54,3 +54,13 @@ def print_params(title, *params):
 11. 递归　阶乘和幂 
 12. 实际上,模块 bisect 提供了标准的二分查找实现。
 13. 四种传参数:  直接将实参赋予行参, 根据键值对的形式做的匹配, `func(*arg)`传入任意个参数, `func(**kargs)`其是以键值对字典的形式向函数传参
+
+#再看抽象
+多态(polymorphism) -> 即便你不知道变量指向的是哪种对象,也能够对其执行操作,且操作的行为将随对象所属的类型(类)而异
+
+repr 是多态的集大成者之一,可用于任何对象
+
+Polymorphic behaviour allows you to specify common methods in an "abstract" level, and implement them in particular instances
+
+每个对象都属于特定的类,并被称为该类的实例。
+
