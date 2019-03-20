@@ -1,0 +1,12 @@
+# 文件
+1. 打开文件open`f = open('somefile.txt')`
+2. 文件模式 r(读取), w(写入), a(附加), b(二进制), t(文本), +(读写)
+3. 文件的基本方法 读取open, 写write
+4. 随机存取 `seek(offset[, whence])` `whence`
+5. 读取行 readline/readlines
+6. 读取所有内容
+```
+with open(filename, 'r+') as f:
+    for line in f.readlines():
+        process(line)
+```
