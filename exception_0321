@@ -1,0 +1,19 @@
+#　异常
+1. 让异常沿着你指定的方向出错
+2. `raise Exception`
+
+    Exception -> 几乎所有的异常类都是从它派生而来的  
+    AttributeError -> 引用属性或给它赋值失败时引发  
+    OSError -> 操作系统不能执行指定的任务(如打开文件)时引发,有多个子类    
+    IndexError -> 使用序列中不存在的索引时引发,为 LookupError 的子类  
+    KeyError -> 使用映射中不存在的键时引发,为 LookupError 的子类 
+    NameError -> 找不到名称(变量)时引发   
+    SyntaxError -> 代码不正确时引发 
+    TypeError -> 将内置操作或函数用于类型不正确的对象时引发  
+    ValueError -> 将内置操作或函数用于这样的对象时引发:其类型正确但包含的值不合适  
+    ZeroDivisionError -> 在除法或求模运算的第二个参数为零时引 
+3. 自定义的异常类 直接或简接地继承Exception
+4. 捕获异常 try/except 如果要使用一个 except 子句捕获多种异常,可在一个元组中指定这些异常.
+    try-except-else
+5. try-finally 不管 try 子句中发生什么异常,都将执行 finally 子句
+6. 发出警报 模块warnings里面的函数warn filterwarnings 抑制警告
