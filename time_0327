@@ -1,0 +1,9 @@
+# 时间模块
+time.time()  
+time.sleep()让时间暂停, 在 IDLE 中按 Ctrl-C 不会中断 time.sleep()调用  
+round -> 将数字四舍五入到最近的整数　　
+datetime 有自己的数据类型, 调用datetime.datetime.now()可以返回一个datetime对象  
+datetime.datetime.fromtimestamp()  
+datetime 对象可以用比较操作符进行比较,弄清楚谁在前面。  
+datetime 模块还提供了 timedelta 数据类型,它表示一段时间,而不是一个时刻  
+利用 strftime()方法,可以将 datetime 对象显示为字符串. 向 strftime()传入一个定制的格式字符串  
