@@ -1,0 +1,31 @@
+#2019实战第二期-文件格式读书打卡
+
+## CSV
+1. CSV 模块
+    * 值没有类型，所有东西都是字符串
+    * 没有字体大小， 没有多个工作表
+    * 不能指定单元高度宽度，也不能合并单元格
+2. Reader   可以用for循环，也可以用list
+    
+3. Writer 
+
+4. delimiter 和 lineterminator 关键字参数
+
+5. 删除表头
+```
+>>> import csv
+>>> outputFile = open('output.csv', 'w', newline='')
+>>> exampleFile = open('example.csv')
+>>> for row in exampleFile:
+>>>     if exampleFile.line_num == 1:
+>>>         continue
+>>> outputWriter = csv.writer(outputFile)
+>>> outputWriter.writerow(['spam', 'eggs', 'bacon', 'ham'])
+
+```
+
+## JSON
+
+1. `json.loads()` and `json.dumps()`
+
+
