@@ -1,0 +1,26 @@
+# 多线程　
+要的到单独的线程，首先要调用threading.Thread(), 生成一个Thread对象,
+可以传入关键字参数traget=函数名(不是函数())
+```python
+import threading, time
+print('Start of program.')
+
+def takeANap():
+    time.sleep(5)
+    print('Wake up!')
+    
+threadObj = threading.Thread(target=takeANap)
+threadObj.start()
+
+print('End of program')
+
+```
+##向线程的目标函数传递参数
+```python
+print('Cats', 'Dogs', 'Frogs', sep=' & ')
+
+import threading
+threadObj = threading.Thread(target=print, args=['Cats', 'Dogs', 'Frogs'], kwargs={'sep': ' & '})
+threadObj.start()
+
+```
