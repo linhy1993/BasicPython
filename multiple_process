@@ -24,3 +24,6 @@ threadObj = threading.Thread(target=print, args=['Cats', 'Dogs', 'Frogs'], kwarg
 threadObj.start()
 
 ```
+
+## Process
+利用内建的subprocess模块中的Popen()函数, Python程序可以启动其他程序．
