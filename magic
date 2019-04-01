@@ -1,0 +1,110 @@
+# Magic, Property and Iterator
+### 构造函数(constructor)
+`__init__(self)`
+### 重写普通方法和特殊的构造函数
+每个类都有一个或者多个超类，并从它们那里继承行为．对类B的实例调用方法时，如果找不到该方法，将在其超类A中查找．
+要在子类中添加功能，可以添加方法，可以重写超类的方法．重写构造函数时,必须调用超类(继承的类)的构造函数,否则可能无法正确地初始化对象。  
+### 调用未关联的超类构造函数
+```python
+class Bird(object):
+    def __init__(self):
+        self.hungry = True
+    def eat(self):
+        if self.hungry:
+            print("Ahhh")
+            self.hungry = False
+        else:
+            print("No thank you!")
+
+class SongBird(Bird):
+    def __init__(self):
+        Bird.__init__(self)
+        self.sound = 'Squawk!'
+    def sing(self):
+        print(self.sound)
+```
+### super
+调用这个函数时,将当前类和当前实例作为参数。对其返回的对象调用方法时,调用的将是超类(而不是当前类)的方法。
+super的优点: 多个超类也只需调用函数super一次,　另外对于两个超类从同一个类派生而来的也能自动处理．  
+```python
+class Bird(object):
+    def __init__(self):
+        self.hungry = True
+    def eat(self):
+        if self.hungry:
+            print("Ahhh")
+            self.hungry = False
+        else:
+            print("No thank you!")
+
+class SongBird(Bird):
+    def __init__(self):
+        super().__init__()
+        self.sound = 'Squawk!'
+    def sing(self):
+        print(self.sound)
+
+```
+### 元素访问
+基本的序列和映射协议
+*__len__(self): 返回集合包含的项数，对于序列是元素的个数，对于映射是键值对
+*__getitem__(self, key): 返回与指定建相关的值，对于序列应该是index整数，对于映射，键可以是任何类型
+*__setitem__(self, key, value): 以与相关连的方式存储值
+*__delitem__(self, key): 删除
+### 函数property
+```python
+class Rectangle:
+    def __init__(self):
+        self.width = 0
+        self.height = 0
+    
+    def set_size(self, size):
+        self.width, self.height = size
+    
+    def get_size(self):
+        return self.width, self.height
+        
+    size=property(get_size, set_size)
+
+```
+### @staticmethod and @classmethod
+静态方法的定义中没有参数self, 可直接通过类来调用  
+类方法的定义中包含类似于self的参数，通常被名为cls  
+
+###　迭代器
+__iter__
+```python
+class Fibs:
+    def __init__(self):
+        self.a = 0
+        self.b = 1
+    def __next__(self):
+        self.a, self.b = self.b, self.a + self.b
+        return self.a
+    def __iter__(self):
+        return self
+```
+
+### 生成器 simple generator
+包含 yield 语句的函数都被称为生成器  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
