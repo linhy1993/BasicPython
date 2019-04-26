@@ -1,3 +1,5 @@
+from urllib.parse import unquote
+
 import pandas as pd
 import requests
 import re
@@ -21,8 +23,10 @@ def save_into_csv(res):
     :return:
     """
 
-    df = pd.DataFrame(res, columns=['person_name', 'create_time', 'content'])
+    df = pd.DataFrame(res, columns=['person_name', 'topic', 'create_time', 'content'])
+    df.drop_duplicates(inplace=True)
     df.to_csv('test.csv', index=None, header=True, encoding='utf-8', mode='a')
+
 
 def clean_conten(content):
     """remove html tag
@@ -31,10 +35,20 @@ def clean_conten(content):
     :return:
     """
     reg = re.compile('^[^>]*>')
-    content = reg.sub('',content).replace('\n','').replace(' ','')
+    content = reg.sub('', content).replace('\n', '').replace(' ', '')
     res = re.sub(r"\s+", " ", content)
     # titile decode
     return res
+
+
+def find_title(text):
+    try:
+        title_raw = re.findall('title=\"(.*)\"\s', text)[0]
+        title = unquote(title_raw, 'utf-8')
+        return title
+    except IndexError:
+        return text
+
 
 def get_person_post(person_post):
     """Get information from json
@@ -43,36 +57,46 @@ def get_person_post(person_post):
     :return:
     """
     resp_data = person_post['resp_data']
-    content, create_time, person_name = [], [], []
+    topic, content, create_time, person_name = [], [], [], []
     topics = resp_data['topics']
     for i in range(len(topics)):
+        topic.append(find_title(topics[i]['topic']['talk']['text']))
         content.append(clean_conten(topics[i]['topic']['talk']['text']))
-        # TODO: clean content
         create_time.append(topics[i]['topic']['create_time'])
         person_name.append(topics[i]['topic']['talk']['owner']['name'])
 
-    total_res = {'person_name': person_name, 'create_time': create_time, 'content': content}
-    save_into_csv(total_res)
+    total_res = {'person_name': person_name, 'topic': topic, 'create_time': create_time, 'content': content}
+    # save_into_csv(total_res)
+    return person_name, topic, create_time, content
 
 
 def decode_url(url):
     r = requests.get(url, headers=HEADERS)
     data = r.json()
     if len(data['resp_data']['topics']) > 0:
-        get_person_post(data)
+        person_name, topic, create_time, content = get_person_post(data)
+        return person_name, topic, create_time, content
     else:
         raise AttributeError
 
 
 def main():
+    person_name_lst, topic_lst, create_time_lst, content_lst = [], [], [], []
     index = 0
     while True:
         url = f'https://api.zsxq.com/v1.10/search/topics?count=30&scope=joined&index={index}&keyword=2019%E5%AE%9E%E6%88%98%E7%AC%AC%E4%BA%8C%E6%9C%9F'
         index += 30
         try:
-            decode_url(url)
+            person_name, topic, create_time, content = decode_url(url)
+            person_name_lst.extend(person_name)
+            topic_lst.extend(topic)
+            create_time_lst.extend(create_time)
+            content_lst.extend(content)
         except AttributeError:
             break
+    total_res = {'person_name': person_name_lst, 'topic': topic_lst, 'create_time': create_time_lst,
+                 'content': content_lst}
+    save_into_csv(total_res)
 
 
 if __name__ == '__main__':
