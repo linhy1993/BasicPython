@@ -14,6 +14,7 @@ def get_one_page(url):
     except RequestException as e:
         return None
 
+
 def parse_one_page(html):
     pattern = re.compile('<li class="item pb-3 pt-3 border-bottom">.*?<a href="/items.*?>(.*?)</a>.*?authors.*?>(.*?)'+
                          '</a>'+'.*?img.*?src="(.*?)"'+'.*?<p>(.*?)</p>', re.S)
@@ -26,11 +27,11 @@ def parse_one_page(html):
             'summary': item[3].strip()
         }
 
+
 def write_in_file(content):
     with open('res.txt', 'a') as f:
         f.write(json.dumps(content) + '\n')
         f.close()
-
 
 def main(year):
     url = f'https://thegreatestbooks.org/the-greatest-fiction-from/{year}/to/{year+1}'
