@@ -1,9 +1,22 @@
-import re
-from urllib.parse import urlencode
-import requests
 import json
+import os
+import re
+import logging
+from hashlib import md5
+from multiprocessing.pool import Pool
+from urllib.parse import urlencode
+from json import JSONDecodeError
+import pymongo
+import requests
 from bs4 import BeautifulSoup
 from requests.exceptions import RequestException
+
+from toutiao.config import BasicConfig
+
+logger = logging.getLogger(__name__)
+
+client = pymongo.MongoClient(BasicConfig.MONGO_URL, connect=False)
+db = client[f'{BasicConfig.MONGO_DB}']
 
 HEADERS = {
     'accept': 'application / json, text / javascript',
@@ -40,15 +53,18 @@ def get_page_index(offset, keyword):
             return response.text
         return None
     except RequestException:
-        print('请求索引页面出错')
+        logger.debug('请求索引页面出错')
         return None
 
 
 def parse_one_page(html):
-    data = json.loads(html)
-    if data and 'data' in data.keys():
-        for item in data.get('data'):
-            yield item.get('article_url')
+    try:
+        data = json.loads(html)
+        if data and 'data' in data.keys():
+            for item in data.get('data'):
+                yield item.get('article_url')
+    except JSONDecodeError:
+        pass
 
 
 def get_page_detail(url):
@@ -58,7 +74,7 @@ def get_page_detail(url):
             return response.text
         return None
     except RequestException:
-        print('请求详情页面出错')
+        logger.debug('请求详情页面出错')
         return None
 
 
@@ -68,21 +84,69 @@ def parse_get_page(html, url):
     pattern = re.compile('img src&#x3D;&quot;(.*?)&quot;', re.S)
     image = re.findall(pattern, html)
     if image:
+        for i in image:
+            download_img(i)
         return {
             'title': title,
             'url': url,
             'image': image
         }
+    else:
+        change_pattern = re.compile(r'gallery: JSON.parse.*?\(\"(.*?)\"\)', re.S)
+        image = re.search(change_pattern, html)
+        if image:
+            json_data = image.group(1).replace('\\', '')
+            data = json.loads(json_data)
+            if data and 'sub_images' in data.keys():
+                sub_images = data.get('sub_images')
+                images = [item.get('url') for item in sub_images]
+                for i in images:
+                    download_img(i)
+                return {
+                    'title': title,
+                    'url': url,
+                    'image': images
+                }
 
 
-def main():
-    html = get_page_index(0, '街拍')
+def save_to_mongo(result):
+    if db[BasicConfig.MONGO_TABLE].insert_one(result):
+        logger.debug('Save in DB', result)
+        return True
+    return False
+
+
+def download_img(url):
+    logger.info(f"Download {url} image")
+    try:
+        response = requests.get(url, headers=HEADERS)
+        if response.status_code == 200:
+            save_image(response.content)
+        return None
+    except RequestException:
+        logger.debug('请求Image出错')
+        return None
+
+
+def save_image(content):
+    file_path = f'{BasicConfig.IMG_ROOT}/{md5(content).hexdigest()}.jpg'
+    if not os.path.exists(file_path):
+        with open(file_path, 'wb') as f:
+            f.write(content)
+            f.close()
+
+
+def main(offset):
+    html = get_page_index(offset, BasicConfig.KEY_WORD)
     for url in parse_one_page(html):
         html_detail = get_page_detail(url)
         if html_detail:
             result = parse_get_page(html_detail, url)
-            print(result)
+            if isinstance(result, dict):
+                save_to_mongo(result)
 
 
 if __name__ == '__main__':
-    main()
+    groups = [x * 2 for x in (BasicConfig.GROUP_START, BasicConfig.GROUP_END)]
+    pool = Pool()
+    pool.map(main, groups)
