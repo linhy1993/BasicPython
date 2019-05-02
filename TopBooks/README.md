@@ -3,3 +3,5 @@
 Data is from [The Greatest Books](https://thegreatestbooks.org/)
 
     $ pip install requests
+ 
+Skills: Requests, Re, Multiple Process
