@@ -16,8 +16,8 @@ def get_one_page(url):
 
 
 def parse_one_page(html):
-    pattern = re.compile('<li class="item pb-3 pt-3 border-bottom">.*?<a href="/items.*?>(.*?)</a>.*?authors.*?>(.*?)'+
-                         '</a>'+'.*?img.*?src="(.*?)"'+'.*?<p>(.*?)</p>', re.S)
+    pattern = re.compile('<li class="item pb-3 pt-3 border-bottom">.*?<a href="/items.*?>(.*?)</a>.*?authors.*?>(.*?)' +
+                         '</a>' + '.*?img.*?src="(.*?)"' + '.*?<p>(.*?)</p>', re.S)
     items = re.findall(pattern, html)
     for item in items:
         yield {
@@ -33,11 +33,13 @@ def write_in_file(content):
         f.write(json.dumps(content) + '\n')
         f.close()
 
+
 def main(year):
-    url = f'https://thegreatestbooks.org/the-greatest-fiction-from/{year}/to/{year+1}'
+    url = f'https://thegreatestbooks.org/the-greatest-fiction-from/{year}/to/{year + 1}'
     html = get_one_page(url=url)
     for item in parse_one_page(html):
         write_in_file(item)
+
 
 if __name__ == '__main__':
     pool = Pool()
