@@ -3,7 +3,7 @@ import pymysql
 
 class Database():
     def __init__(self, truncate=False):
-        self.db = pymysql.connect(host='127.0.0.1', port=3306, user='root', password='123456', db='test')
+        self.db = pymysql.connect(host='127.0.0.1', port=3306, user='root', password='123456', db='movie')
         self.cursor = self.db.cursor()
         if truncate:
             self.truncate_table()
